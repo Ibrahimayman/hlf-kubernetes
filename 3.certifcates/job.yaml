@@ -1,0 +1,30 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: create-certs
+spec:
+  parallelism: 1
+  completions: 1
+  template:
+    metadata:
+      name: create-certs
+    spec:
+      containers:
+        - name: create-certs
+          image: hyperledger/fabric-ca-tools:latest
+          resources:
+            requests:
+              memory: "300Mi"
+              cpu: "300m"
+            limits:
+              memory: "500Mi"
+              cpu: "350m"
+          command:
+            - /bin/sh
+            - -c
+            - |
+              ./prerequsite/scripts/orderer-certs.sh &&
+              ./prerequsite/scripts/org1-certs.sh &&
+              ./prerequsite/scripts/org2-certs.sh &&
+              ./prerequsite/scripts/org3-certs.sh
+      restartPolicy: Never
